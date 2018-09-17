@@ -1,7 +1,7 @@
 $(document).ready(function () {
     //change all orders
     $('#change-note-letter').click(function () {
-        var tilte, note, letter, state;
+        var title, note, letter, state;
 
         title = this.innerHTML;
 
@@ -14,17 +14,16 @@ $(document).ready(function () {
         $('.note-letter').each(function() {
             if (title == 'Примечание - Письмо') {
                 note = $(this).attr('note');
-                $(this).text(note).css({'color': '#F00'});
+                $(this).html('<span class="red">' + note + '</span>');
             }
             else if (title == 'Примечание') {
                 letter = $(this).attr('letter');
-                $(this).text(letter).css({'color': '#000'});
+                $(this).text(letter);
             }
             else if (title == 'Письмо') {
                 note = $(this).attr('note');
                 letter = $(this).attr('letter');
-                if (note) $(this).text(note).css({'color': '#F00'});
-                else $(this).text(letter).css({'color': '#000'});
+                $(this).html('<span class="red">' + note + '</span>').append(' - ' + letter);
             }
         });
     });
@@ -34,9 +33,10 @@ $(document).ready(function () {
         state = $(this).attr('state');
         note = $(this).attr('note');
         letter = $(this).attr('letter');
-
-        if (state == 'note') $(this).text(letter).css({'color': '#000'}).attr('state', 'letter');
-        else if (state == 'letter') $(this).text(note).css({'color': '#F00'}).attr('state', 'note');
+        console.log(state);
+        if (state == 'note-letter') $(this).html('<span class="red">' + note + '</span>').attr('state', 'note');
+        else if (state == 'note') $(this).text(letter).attr('state', 'letter');
+        else $(this).html('<span class="red">' + note + '</span>').append(' - ' + letter).attr('state', 'note-letter');
     });
 
 });

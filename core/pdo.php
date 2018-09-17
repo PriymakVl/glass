@@ -23,46 +23,4 @@ class PHPDataObject {
 		return new PDO($dsn, USER, PASSWORD, $options);
 	}
 
-	protected static function prepareParams($params)
-    {
-        if (empty($params)) return [];
-        foreach ($params as $key => $value) {
-            $key = ':'.$key;
-            $prepare[$key] = $value;
-        }
-        return $prepare;
-    }
-
-    protected static function bildSelect($params, $table_name, $sql = null)
-    {
-        if ($sql) $sql = $sql.$table_name;
-        else $sql = 'SELECT * FROM '.$table_name;
-        $where = self::bildWhere($params);
-        return $sql.$where;
-    }
-
-    protected static function bildWhere($params)
-    {
-        if (empty($params)) return '';
-        $where = ' WHERE ';
-        $keys = array_keys($params);
-        foreach ($keys  as $key) {
-            $where = $where.'`'.$key.'` = :'.$key.' AND ';
-        }
-        return rtrim($where, ' AND ');
-    }
-
-    public function getLastId()
-    {
-        $stmt = $this->pdo->query("SELECT LAST_INSERT_ID()");
-        return $stmt->fetchColumn();
-    }
-
-//    public function bildValues($values)
-//    {
-//        foreach ($values as $key => $value) {
-//            $this->stmt->bildValue(':'.$key, $value);
-//        }
-//        return $this;
-//    }
 }

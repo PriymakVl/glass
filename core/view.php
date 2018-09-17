@@ -1,8 +1,7 @@
 <?php
 
 class View {
-	
-	public $header = 'header.php';
+
 	public $footer = 'footer.php';
 
 	public function render($content, $data = null)
@@ -14,4 +13,12 @@ class View {
 		include_once('./views/layouts/base.php');
 		exit();
 	}
+
+	public function renderWithLayout($layout, $content, $data = null)
+    {
+        $content = $content.'.php';
+        if ($data) extract($data);
+        include_once('./views/layouts/'.$layout.'.php');
+        exit();
+    }
 }

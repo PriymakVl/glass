@@ -4,22 +4,32 @@ require_once ('./models/order.php');
 
 ?>
 
+<!-- css files -->
+<link rel="stylesheet" href="/web/css/order/menu.css">
+<link rel="stylesheet" href="/web/css/order/index.css">
+
 <div id="content">
-	<h2>
-        <a href="/order/list">Заказы</a>
-    </h2>
 
     <!-- message -->
     <? include_once('./views/total/message.php'); ?>
 
-    <!-- order  data -->
-    <? include_once('table.php'); ?>
+    <div id="order-index-wrp">
+        <ul class="tabs">
 
-    <!-- order list menu -->
-    <? //include_once('menu.php'); ?>
+            <!-- order  data -->
+            <? include_once('data.php'); ?>
 
-    <!-- order form update -->
-    <? //include_once('form_update.php'); ?>
+            <!-- progons -->
+            <? include_once('progons/main.php'); ?>
+
+            <!-- statistics -->
+            <? include_once('statistics.php'); ?>
+
+        </ul>
+    </div>
+
+    <!-- order menu -->
+    <? include_once('menu.php'); ?>
 
 </div><!-- id content -->
 

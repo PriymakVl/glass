@@ -2,6 +2,7 @@
 
 require_once ("./models/order.php");
 require_once ("./models/customer.php");
+require_once ("./helpers/date.php");
 
 class LetterParse {
 
@@ -24,7 +25,7 @@ class LetterParse {
         $this->parseNumberOrder();
         $this->parseDateExecution();
         $this->parseCustomer();
-        if ($this->typeOrder == Order::TYPE_PACKET) $this->parseCountPacket();
+        //if ($this->typeOrder == Order::TYPE_PACKET) $this->parseCountPacket();
     }
 
     public function parseNumberOrder()
@@ -41,7 +42,7 @@ class LetterParse {
             $date = str_replace(' ', '', $matches[0]);
             $date = str_replace(',.', '.', $date);
             $date = str_replace('.,', '.', $date);
-            $this->date = $date;
+            $this->date = Date::replaceLongYearForShort($date);
         }
     }
 

@@ -7,7 +7,7 @@
     ?>
 
 <? if(isset($message)): ?>
-    <div class="messages-wrp">
+    <div class="message-wrp">
         <p class="<?=$message['class']?>"><?=$message['text']?></p>
     </div>
 <? endif; ?>

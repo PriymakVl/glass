@@ -4,6 +4,9 @@ require_once ('./models/order.php');
 
 ?>
 
+<!-- css files -->
+<link rel="stylesheet" href="/web/css/order.css">
+
 <div id="content">
     <h2>Перечень заказов соответствующих запросу</h2>
 

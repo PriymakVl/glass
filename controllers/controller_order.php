@@ -11,45 +11,55 @@ class Controller_Order extends Controller {
 	public function action_index()
 	{
 		$order = new Order(Param::get('order_id'));
-		$order->convertState();
-		//$order->getProgons();
+		$order->getNameState()->getProgons();
+		$states = OrderState::get($order->id);
         $title = 'Заказ';
-		$this->view->render('order/index/main', compact('order', 'title'));
+		$this->view->render('order/index/main', compact('order', 'title', 'states'));
 	}
-	
+
 	public function action_list()
 	{
 	    $params = Param::forOrderList();
-        $light_id = Param::get('light_id');
 		$orders = Order::getList($params);
         $title = 'Заказы';
-		$this->view->render('order/list/main', compact('orders', 'params', 'title', 'light_id'));
+		$this->view->render('order/list/main', compact('orders', 'params', 'title'));
 	}
+
 
 	public function action_add()
     {
-        $type = Param::get('type');
-        $letter = new LetterParse($type);
-        debug($letter);
-        $order = Order::getByNumber($letter->number);
+        $order = Order::getByNumber(Param::get('number'));
         if ($order) {
             Message::setSession('error', 'order', 'already_exist');
-            $this->redirect('order?order_id='.$order->id);
+            $this->redirect('order/index?order_id='.$order->id);
         }
-        $add_id = Order::add($letter);
-        Message::setSession('success', 'order', 'success_add');
-        if ($type == Order::TYPE_GLASS) $this->redirect('order/list?type='.Order::TYPE_GLASS.'&light_id='.$add_id);
-        else $this->redirect('order/list?light_id='.$add_id);
+        else {
+            $add_id = Order::add(Param::forAddOrder());
+            Message::setSession('success', 'order', 'success_add');
+            $this->redirect('order/list?&light_id='.$add_id.'&type='.Param::get('type'));
+        }
+    }
+
+    public function action_letterparse()
+    {
+        $type = Param::get('type');
+        $letter = new LetterParse($type);
+        $data['number'] = $letter->number;
+        $data['date'] = $letter->date;
+        echo json_encode($data);
+        exit;
     }
 
     public function action_delete()
     {
+        $type = Param::get('type');
         $ids = Param::getIds('ids');
         foreach ($ids as $id) {
             $order = new Order($id);
             $order->delete();
         }
-        $this->redirect('order/list');
+        Message::setSession('success', 'order', 'success_delete');
+        $this->redirect('order/list?type='.$type);
     }
     
     public function action_state()
@@ -66,12 +76,13 @@ class Controller_Order extends Controller {
     public function action_kind()
     {
         $kind = Param::get('kind');
+        $type = Param::get('type');
         $ids = Param::getIds('ids');
         foreach ($ids as $id) {
             $order = new Order($id);
             $order->setKind($kind);
         }
-        $this->redirect('order/list');
+        $this->redirect('order/list?type='.$type);
     }
 
     public function action_search()
@@ -83,20 +94,10 @@ class Controller_Order extends Controller {
         }
         else {
             Message::setSession('success', 'order', 'search_found');
-            if (count($orders) == 1) $this->redirect('order?order_id='.$orders[0]->id);
+            if (count($orders) == 1) $this->redirect('order/index?order_id='.$orders[0]->id);
             else $this->view->render('order/search/main', compact('orders'));
         }
     }
-
-//    public function action_type()
-//    {
-//        $ids = Param::getIds('ids');
-//        foreach ($ids as $id) {
-//            $order = new Order($id);
-//            $order->setType(Param::get('type'));
-//        }
-//        $this->redirect('order/list');
-//    }
 
     public function action_update()
     {
@@ -108,6 +109,32 @@ class Controller_Order extends Controller {
             $this->redirect('order/list?light_id='.$order->id);
         }
         $this->view->render('order/update/main', compact('order'));
+    }
+    //the order is issued to work
+    public function action_progon()
+    {
+        $ids = Param::getIds('ids');
+        $type = Param::get('type');
+        $kind = Param::get('kind');
+        foreach ($ids as $id) {
+            $order = new Order($id);
+            $result = $order->setProgonsPackets();
+            if (!$result) {
+                Message::setSession('error', 'order', 'state_not_issued_not_progons');
+                break;
+            }
+            $order->setState(OrderState::WORK);
+        }
+        if ($result) Message::setSession('success', 'order_state', 'in_work');
+        if ($type) $this->redirect('order/list?type='.$type);
+        else if ($kind == Order::KIND_HIGHLIGHT) $this->redirect('order/list?kind='.$kind);
+    }
+
+    public function action_highlight()
+    {
+        $orders = Order::getHighlightPreparation();
+        $title = 'Выделенные заказы';
+        $this->view->render('order/list/main', compact('orders', 'title'));
     }
 	
 }

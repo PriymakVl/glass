@@ -1,41 +1,9 @@
 <?php
 
-require_once ('./models/order.php');
+require_once ('param_base.php');
+require_once ('./models/order_state.php');
 
-class Param {
-
-    const  STATUS_ACTIVE = 1;
-
-    public static function get($key, $default = false)
-    {
-        if (empty($_REQUEST[$key])) return $default;
-        return $_REQUEST[$key];
-    }
-
-    private static function getParam($params, $key, $all, $default)
-    {
-        if (empty($_GET[$key]) && $default) $params[$key] = $default;
-        else if (isset($_GET[$key]) &&  $_GET[$key] == $all) $params;
-        else  $params[$key] = $_GET[$key];
-        return $params;
-    }
-
-    public static function select($keys)
-    {
-        $params = [];
-        foreach($keys as $key)
-        {
-            if (isset($_REQUEST[$key])) $params[$key] = $_REQUEST[$key];
-        }
-        return $params;
-    }
-
-    public static function getIds($key)
-    {
-        if (empty($_REQUEST[$key])) exit('параметр '.$key.' не существует');
-        $str = $_REQUEST[$key];
-        return explode(',', rtrim($str, ','));
-    }
+class Param extends ParamBase {
 
     public static function forSheetList()
     {
@@ -58,8 +26,26 @@ class Param {
     {
         $params = [];
         $params = self::getParam($params, 'type', Order::TYPE_All, Order::TYPE_PACKET);
-        $params = self::getParam($params, 'state', Order::STATE_ALL, Order::STATE_NOT_ISSUED);
+        $params = self::getParam($params, 'state', OrderState::ALL, Order::KIND_HIGHLIGHT);
         $params['status'] = isset($_GET['status']) ? $_GET['status'] : self::STATUS_ACTIVE;
+        return $params;
+    }
+
+    public static function forAddOrder()
+    {
+        $params = self::select(['number', 'letter', 'type', 'note']);
+        $params['count_pack'] = self::get('count_pack', 0);
+        $params['state'] = OrderState::PREPARATION;
+        $params['date_state'] = time();
+        $params['date_exec'] = Date::convertStringToTime(self::get('date_exec'));
+        return $params;
+    }
+
+    public static function forUpdateOrder()
+    {
+        $params = self::select(['number', 'note', 'state', 'type', 'letter']);
+        $params['date_exec'] = Date::convertStringToTime(self::get('date_exec'));
+        $params['count_pack'] = self::get('count_pack', 0);
         return $params;
     }
 }

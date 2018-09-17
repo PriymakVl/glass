@@ -1,4 +1,4 @@
-<table>
+<table class="list-orders">
     <tr>
         <th width="30">
             <input type="checkbox" disabled>
@@ -21,12 +21,8 @@
                 <td><?=$order->date_exec?></td>
                 <td><?=$order->count_pack?></td>
                 <td><?=$order->customer ? $order->customer->name : 'Не определен'?></td>
-                <td class="note-letter left" note="<?=$order->note?>" letter="<?=$order->letter?>" state="<?= $order->note ? 'note' : 'letter'?>">
-                    <? if ($order->note): ?>
-                        <span class="red"><?=$order->note?></span>
-                    <? else: ?>
-                        <?=$order->letter?>
-                    <? endif; ?>
+                <td class="note-letter left" note="<?=$order->note?>" letter="<?=$order->letter?>" state="note-letter">
+                    <span class="red"><?=$order->note?></span> - <?=$order->letter?>
                 </td>
             </tr>
         <? endforeach; ?>

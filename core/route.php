@@ -6,7 +6,7 @@ class Route
 	{
 		// контроллер и действие по умолчанию
 		$controller_name = 'Main';
-		$action_name = 'index';
+		$action_name = 'login';
 		
 		//убираем из url get параметры
 		$url = explode('?', $_SERVER['REQUEST_URI'], 2);

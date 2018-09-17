@@ -4,7 +4,7 @@ class Message {
 
     public static function setSession($type, $section, $key)
     {
-        $messages = parse_ini_file('./files/messages.ini', true);
+        $messages = parse_ini_file('./web/files/messages.ini', true);
         $message = $messages[$section][$key];
         $_SESSION[$type] = $message;
     }
@@ -27,7 +27,7 @@ class Message {
 
     public static function get($section, $key)
     {
-        $messages = parse_ini_file('./files/messages.ini', true);
+        $messages = parse_ini_file('./web/files/messages.ini', true);
         return $messages[$section][$key];
     }
 

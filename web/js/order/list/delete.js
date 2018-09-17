@@ -1,6 +1,6 @@
 $( document ).ready(function() {
 
-        var order_id, agree, ids = '';
+        var order_id, agree, type_order, ids = '';
 
         $('#order-delete').click(function() {
             var items = $('table :checkbox:checked');
@@ -19,6 +19,8 @@ $( document ).ready(function() {
                 if (!agree) return;
             }
 
-            location.href = 'http://' + location.host + '/order/delete?ids=' + ids;
+            type_order = $('#filter-type').val();
+
+            location.href = 'http://' + location.host + '/order/delete?ids=' + ids + '&type=' + type_order;
         });
 });
